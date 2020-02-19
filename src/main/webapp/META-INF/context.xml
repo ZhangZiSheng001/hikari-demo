@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+  <Resource
+      name="jdbc/hikariCP-test"
+      factory="com.zaxxer.hikari.HikariJNDIFactory"
+      auth="Container"
+      type="javax.sql.DataSource"
+   
+      jdbcUrl="jdbc:mysql://localhost:3306/github_demo?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=GMT%2B8&amp;useSSL=true"
+      username="root"
+      password="root"
+      driverClassName="com.mysql.cj.jdbc.Driver"
+      maximumPoolSize="10"
+      minimumIdle="0"
+      />
+</Context>

@@ -1,0 +1,30 @@
+@startuml
+scale 1.2
+
+class ConcurrentBag<T extends ConcurrentBag.IConcurrentBagEntry> {
+   - CopyOnWriteArrayList<T> sharedList
+   - boolean weakThreadLocals
+   - ThreadLocal<List<Object>> threadList
+   - ConcurrentBag.IBagStateListener listener
+   - AtomicInteger waiters
+   - boolean closed
+   - SynchronousQueue<T> handoffQueue
+   
+   + T borrow(long timeout, final TimeUnit timeUnit)
+   + void requite(final T bagEntry)
+   + void add(final T bagEntry)
+   + boolean remove(final T bagEntry)
+   + void close()
+   + List<T> values(final int state)
+   + List<T> values()
+   + boolean reserve(final T bagEntry)
+   + void unreserve(final T bagEntry)
+   + int getWaitingThreadCount()
+   + int getCount(final int state)
+   + int[] getStateCounts()
+   + int size()
+   + void dumpState()
+}
+
+center footer <font size="15" color="red">made by ZhangZiSheng001</font>
+@enduml

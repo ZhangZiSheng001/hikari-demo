@@ -1,0 +1,26 @@
+@startuml
+scale 1.2
+
+class HikariDataSource {
+    - HikariPool fastPathPool
+    - HikariPool pool
+    ----
+    + void evictConnection(Connection connection)
+    + boolean isClosed()
+    ..DataSource 方法..
+    + Connection getConnection()
+    + Connection getConnection(String username, String password)
+    ······
+    ..HikariConfig 方法..
+     void setMetricRegistry(Object metricRegistry)
+     void setMetricsTrackerFactory(MetricsTrackerFactory metricsTrackerFactory)
+     void setHealthCheckRegistry(Object healthCheckRegistry)
+    ..Closeable 方法..
+    + void close()
+    ..MBean..
+    + HikariPoolMXBean getHikariPoolMXBean()
+    + HikariConfigMXBean getHikariConfigMXBean()
+}
+
+center footer <font size="15" color="red">made by ZhangZiSheng001</font>
+@enduml

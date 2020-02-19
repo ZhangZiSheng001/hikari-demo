@@ -1,0 +1,67 @@
+@startuml
+scale 1.2
+
+class HikariPool {
+    - HikariPool.PoolEntryCreator POOL_ENTRY_CREATOR
+    - HikariPool.PoolEntryCreator POST_FILL_POOL_ENTRY_CREATOR
+    - Collection<Runnable> addConnectionQueue
+    - ThreadPoolExecutor addConnectionExecutor
+    - ThreadPoolExecutor closeConnectionExecutor
+    - ConcurrentBag<PoolEntry> connectionBag
+    - ProxyLeakTask leakTask
+    - SuspendResumeLock suspendResumeLock
+    - ScheduledExecutorService houseKeepingExecutorService
+    - ScheduledFuture<?> houseKeeperTask
+    .. JDBC方法 ..
+    + Connection getConnection()
+    + Connection getConnection(final long hardTimeout)
+    + void evictConnection(Connection connection)
+    + synchronized void shutdown()
+    ..IBagStateListener方法..
+    + Future<Boolean> addBagItem(final int waiting)
+    ..HikariPoolMBean方法..
+    + int getActiveConnections()
+    + int getIdleConnections()
+    + int getTotalConnections()
+    + int getThreadsAwaitingConnection()
+    + void softEvictConnections()
+    + synchronized void suspendPool()
+    + synchronized void resumePool()
+    ..Package方法..
+    ~ void logPoolState(String... prefix)
+    ~ void recycle(final PoolEntry poolEntry)
+    ~ void closeConnection(final PoolEntry poolEntry, final String closureReason)
+    ~ int[] getPoolStateCounts()
+    ..非匿名内部类..
+    - class PoolEntryCreator
+    - class HouseKeeper
+    + {static} class PoolInitializationException
+}
+
+abstract class PoolBase {
+    # HikariConfig config
+    ~ PoolBase.IMetricsTrackerDelegate metricsTracker
+    - Executor netTimeoutExecutor
+    - DataSource dataSource
+    .. JDBC方法 ..
+    ~ void quietlyCloseConnection(final Connection connection, final String closureReason)
+    ~ boolean isConnectionAlive(final Connection connection)
+    ~ Throwable getLastConnectionFailure()
+    + DataSource getUnwrappedDataSource()
+    .. PoolEntry方法 ..
+    ~ PoolEntry newPoolEntry()
+    ~ void shutdownNetworkTimeoutExecutor()
+    .. JMX方法 ..
+    ~ void registerMBeans(final HikariPool hikariPool)
+    ~ void unregisterMBeans()
+    ..非匿名内部类..
+    ~ {static} class ConnectionSetupException
+    - {static} class SynchronousExecutor
+    ~ interface IMetricsTrackerDelegate
+    ~ {static} class MetricsTrackerDelegate
+    ~ {static} class NopMetricsTrackerDelegate
+}
+HikariPool -left-|> PoolBase
+
+center footer <font size="15" color="red">made by ZhangZiSheng001</font>
+@enduml
