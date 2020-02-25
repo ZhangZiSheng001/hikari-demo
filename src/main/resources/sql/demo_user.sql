@@ -1,10 +1,3 @@
-
-CREATE DATABASE `github_demo` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-
-USE `github_demo`;
-
-DROP TABLE IF EXISTS `demo_user`;
-
 CREATE TABLE `demo_user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `name` varchar(16) COLLATE utf8_unicode_ci NOT NULL COMMENT '用户名',
