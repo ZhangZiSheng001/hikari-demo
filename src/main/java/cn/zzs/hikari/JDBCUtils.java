@@ -47,7 +47,7 @@ public class JDBCUtils {
 		// 判断为空的话，创建连接并绑定到当前线程
 		if(connection == null) {
 			synchronized(obj) {
-				if(tl.get() == null) {
+				if((connection = tl.get()) == null) {
 					connection = createConnection();
 					tl.set(connection);
 				}
@@ -91,59 +91,6 @@ public class JDBCUtils {
 		}
 	}
 
-	/**
-	 * 
-	 * <p>开启事务</p>
-	 * @author: zzs
-	 * @date: 2019年11月3日 上午11:03:24
-	 * @return: void
-	 * @throws Exception 
-	 */
-	public static void startTrasaction() throws SQLException {
-		getConnection().setAutoCommit(false);
-	}
-
-	/**
-	 * 
-	 * <p>提交事务</p>
-	 * @author: zzs
-	 * @date: 2019年11月3日 上午11:05:54
-	 * @return: void
-	 */
-	public static void commit() {
-		Connection connection = tl.get();
-		if(connection != null) {
-			try {
-				connection.commit();
-				connection.setAutoCommit(true);
-			} catch(SQLException e) {
-				log.error("提交事务失败", e);
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * <p>回滚事务</p>
-	 * @author: zzs
-	 * @date: 2019年11月3日 上午11:08:12
-	 * @return: void
-	 */
-	public static void rollback() {
-		Connection connection = tl.get();
-		if(connection != null) {
-			try {
-				connection.rollback();
-				connection.setAutoCommit(true);
-			} catch(SQLException e) {
-				log.error("回滚事务失败", e);
-			}
-		}
-	}
-	
-	
-
-	
 	public static DataSource getDataSource() {
 		return dataSource;
 	}

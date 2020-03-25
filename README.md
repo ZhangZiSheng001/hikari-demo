@@ -182,16 +182,16 @@ minimumIdle=0
 
 ```java
 	@Test
-	public void save() {
+	public void save() throws SQLException {
 		// 创建sql
 		String sql = "insert into demo_user values(null,?,?,?,?,?)";
 		Connection connection = null;
 		PreparedStatement statement = null;
 		try {
 			// 获得连接
-			connection = JDBCUtil.getConnection();
+			connection = JDBCUtils.getConnection();
 			// 开启事务设置非自动提交
-			JDBCUtil.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -203,13 +203,10 @@ minimumIdle=0
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtil.commit();
-		} catch(Exception e) {
-			JDBCUtil.rollback();
-			log.error("保存用户失败", e);
+			connection.commit();
 		} finally {
 			// 释放资源
-			JDBCUtil.release(connection, statement, null);
+			JDBCUtils.release(connection, statement, null);
 		}
 	}
 ```

@@ -7,10 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * <p>测试使用JDBCUtils获取连接并操作数据库</p>
@@ -19,13 +15,12 @@ import com.zaxxer.hikari.HikariDataSource;
  */
 public class HikariDataSourceTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(HikariDataSourceTest.class);
-
 	/**
 	 * 测试添加用户
+	 * @throws SQLException 
 	 */
 	@Test
-	public void save() {
+	public void save() throws SQLException {
 		// 创建sql
 		String sql = "insert into demo_user values(null,?,?,?,?,?)";
 		Connection connection = null;
@@ -34,7 +29,7 @@ public class HikariDataSourceTest {
 			// 获得连接
 			connection = JDBCUtils.getConnection();
 			// 开启事务设置非自动提交
-			JDBCUtils.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -46,10 +41,7 @@ public class HikariDataSourceTest {
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtils.commit();
-		} catch(Exception e) {
-			JDBCUtils.rollback();
-			logger.error("保存用户失败", e);
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtils.release(connection, statement, null);
@@ -58,9 +50,10 @@ public class HikariDataSourceTest {
 
 	/**
 	 * 测试更新用户
+	 * @throws SQLException 
 	 */
 	@Test
-	public void update() {
+	public void update() throws SQLException {
 		// 创建sql
 		String sql = "update demo_user set age = ?,gmt_modified = ? where name = ?";
 		Connection connection = null;
@@ -69,7 +62,7 @@ public class HikariDataSourceTest {
 			// 获得连接
 			connection = JDBCUtils.getConnection();
 			// 开启事务
-			JDBCUtils.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -79,10 +72,7 @@ public class HikariDataSourceTest {
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtils.commit();
-		} catch(Exception e) {
-			logger.error("异常导致操作回滚", e);
-			JDBCUtils.rollback();
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtils.release(connection, statement, null);
@@ -91,9 +81,10 @@ public class HikariDataSourceTest {
 
 	/**
 	 * 测试查找用户
+	 * @throws SQLException 
 	 */
 	@Test
-	public void findAll() {
+	public void findAll() throws SQLException {
 		// 创建sql
 		String sql = "select * from demo_user where deleted = false";
 		Connection connection = null;
@@ -112,8 +103,6 @@ public class HikariDataSourceTest {
 				int age = resultSet.getInt(3);
 				System.out.println("用户名：" + name + ",年龄：" + age);
 			}
-		} catch(SQLException e) {
-			logger.error("查询用户异常", e);
 		} finally {
 			// 释放资源
 			JDBCUtils.release(connection, statement, resultSet);
@@ -133,7 +122,7 @@ public class HikariDataSourceTest {
 			// 获得连接
 			connection = JDBCUtils.getConnection();
 			// 设置非自动提交
-			JDBCUtils.startTrasaction();
+			connection.setAutoCommit(false);
 			// 获得Statement对象
 			statement = connection.prepareStatement(sql);
 			// 设置参数
@@ -141,19 +130,11 @@ public class HikariDataSourceTest {
 			// 执行
 			statement.executeUpdate();
 			// 提交事务
-			JDBCUtils.commit();
-		} catch(Exception e) {
-			logger.error("异常导致操作回滚", e);
-			JDBCUtils.rollback();
+			connection.commit();
 		} finally {
 			// 释放资源
 			JDBCUtils.release(connection, statement, null);
 		}
-	}
-
-	public static void main(String[] args) throws InterruptedException {
-		new HikariDataSourceTest().findAll();
-		Thread.sleep(60 * 60 * 1000);
 	}
 
 }
