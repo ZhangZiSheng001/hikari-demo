@@ -3,7 +3,7 @@
 <%@page import="java.sql.SQLException"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.PreparedStatement"%>
-<%@page import="cn.zzs.hikari.JDBCUtils"%>
+<%@page import="cn.zzs.mybatis.JDBCUtils"%>
 <%@page import="javax.sql.PooledConnection"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="javax.sql.DataSource"%>

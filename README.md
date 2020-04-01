@@ -102,25 +102,25 @@ HikariCP 是目前最快的连接池，就连风靡一时的  BoneCP  也停止�
 
 这里引入日志包，主要为了打印配置信息，不引入不会有影响的。
 ```xml
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- hikari -->
-		<dependency>
-		    <groupId>com.zaxxer</groupId>
-		    <artifactId>HikariCP</artifactId>
-		    <version>2.6.1</version>
-		</dependency>
-		<!-- mysql驱动 -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.15</version>
-		</dependency>
-		<!-- log -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- hikari -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+        <!-- mysql驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.15</version>
+        </dependency>
+        <!-- log -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -181,34 +181,34 @@ minimumIdle=0
 这里以保存用户为例，路径在 test 目录下的`cn.zzs.hikari`。
 
 ```java
-	@Test
-	public void save() throws SQLException {
-		// 创建sql
-		String sql = "insert into demo_user values(null,?,?,?,?,?)";
-		Connection connection = null;
-		PreparedStatement statement = null;
-		try {
-			// 获得连接
-			connection = JDBCUtils.getConnection();
-			// 开启事务设置非自动提交
-			connection.setAutoCommit(false);
-			// 获得Statement对象
-			statement = connection.prepareStatement(sql);
-			// 设置参数
-			statement.setString(1, "zzf003");
-			statement.setInt(2, 18);
-			statement.setDate(3, new Date(System.currentTimeMillis()));
-			statement.setDate(4, new Date(System.currentTimeMillis()));
-			statement.setBoolean(5, false);
-			// 执行
-			statement.executeUpdate();
-			// 提交事务
-			connection.commit();
-		} finally {
-			// 释放资源
-			JDBCUtils.release(connection, statement, null);
-		}
-	}
+    @Test
+    public void save() throws SQLException {
+        // 创建sql
+        String sql = "insert into demo_user values(null,?,?,?,?,?)";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            // 获得连接
+            connection = JDBCUtils.getConnection();
+            // 开启事务设置非自动提交
+            connection.setAutoCommit(false);
+            // 获得Statement对象
+            statement = connection.prepareStatement(sql);
+            // 设置参数
+            statement.setString(1, "zzf003");
+            statement.setInt(2, 18);
+            statement.setDate(3, new Date(System.currentTimeMillis()));
+            statement.setDate(4, new Date(System.currentTimeMillis()));
+            statement.setBoolean(5, false);
+            // 执行
+            statement.executeUpdate();
+            // 提交事务
+            connection.commit();
+        } finally {
+            // 释放资源
+            JDBCUtils.release(connection, statement, null);
+        }
+    }
 ```
 
 # 使用例子-通过JNDI获取数据源
@@ -224,24 +224,24 @@ minimumIdle=0
 本文在入门例子的基础上增加以下依赖，因为是 web 项目，所以打包方式为 war：
 
 ```xml
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>javax.servlet.jsp-api</artifactId>
-			<version>2.2.1</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
 ```
 
 ## 编写context.xml
@@ -276,8 +276,8 @@ HikariCP 提供了`HikariJNDIFactory`来支持 JNDI 。
 在`web-app`节点下配置资源引用，每个`resource-ref`指向了我们配置好的对象。
 
 ```xml
-	<!-- JNDI数据源 -->
-	<resource-ref>
+    <!-- JNDI数据源 -->
+    <resource-ref>
         <res-ref-name>jdbc/hikariCP-test</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
@@ -291,7 +291,7 @@ HikariCP 提供了`HikariJNDIFactory`来支持 JNDI 。
 ```jsp
 <body>
     <%
-    	String jndiName = "java:comp/env/jdbc/druid-test";
+        String jndiName = "java:comp/env/jdbc/druid-test";
         
         InitialContext ic = new InitialContext();
         // 获取JNDI上的ComboPooledDataSource
@@ -371,10 +371,10 @@ poolName=zzs001
 为了查看具体效果，这里让主线程进入睡眠，避免结束。
 
 ```java
-	public static void main(String[] args) throws InterruptedException {
-		new HikariDataSourceTest().findAll();
-		Thread.sleep(60 * 60 * 1000);
-	}
+    public static void main(String[] args) throws InterruptedException {
+        new HikariDataSourceTest().findAll();
+        Thread.sleep(60 * 60 * 1000);
+    }
 ```
 
 ## 使用jconsole查看
@@ -757,15 +757,15 @@ borrow 和 requite 对于 `ConcurrentBag` 而言是只读的操作，addConnecti
                return bagEntry;
             }
          }
-		 // 通知监听器添加包元素。
+         // 通知监听器添加包元素。
          listener.addBagItem(waiting);
-		
+        
          // 3.如果还没获取到，会从轮训进入handoffQueue队列获取连接对象
          
          timeout = timeUnit.toNanos(timeout);
          do {
             final long start = currentTime();
-           	// 从handoffQueue队列中获取并删除元素。这是一个无容量的阻塞队列，插入操作需要阻塞等待删除操作，而删除操作不需要等待，如果没有元素插入，会返回null，如果设置了超时时间则需要等待
+               // 从handoffQueue队列中获取并删除元素。这是一个无容量的阻塞队列，插入操作需要阻塞等待删除操作，而删除操作不需要等待，如果没有元素插入，会返回null，如果设置了超时时间则需要等待
             final T bagEntry = handoffQueue.poll(timeout, NANOSECONDS);
             // 这里会出现三种情况，
             // 1.超时，返回null
@@ -774,10 +774,10 @@ borrow 和 requite 对于 `ConcurrentBag` 而言是只读的操作，addConnecti
             if (bagEntry == null || bagEntry.compareAndSet(STATE_NOT_IN_USE, STATE_IN_USE)) {
                return bagEntry;
             }
-			// 计算剩余超时时间
+            // 计算剩余超时时间
             timeout -= elapsedNanos(start);
          } while (timeout > 10_000);
-		 // 超时返回null
+         // 超时返回null
          return null;
       }
       finally {
@@ -807,7 +807,7 @@ borrow 和 requite 对于 `ConcurrentBag` 而言是只读的操作，addConnecti
       if (target == null || properties == null) {
          return;
       }
-	
+    
       // 在这里会利用反射获取
       List<Method> methods = Arrays.asList(target.getClass().getMethods());
       // 遍历
@@ -833,17 +833,17 @@ borrow 和 requite 对于 `ConcurrentBag` 而言是只读的操作，addConnecti
       String methodName = "set" + propName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propName.substring(1);
       // 获取对应的Method 对象
       Method writeMethod = methods.stream().filter(m -> m.getName().equals(methodName) && m.getParameterCount() == 1).findFirst().orElse(null);
-	  // 如果不存在，按另一套规则拼接参数的setter方法名
+      // 如果不存在，按另一套规则拼接参数的setter方法名
       if (writeMethod == null) {
          String methodName2 = "set" + propName.toUpperCase(Locale.ENGLISH);
          writeMethod = methods.stream().filter(m -> m.getName().equals(methodName2) && m.getParameterCount() == 1).findFirst().orElse(null);
       }
-	  // 如果该参数setter方法不存在，则抛出异常，从这里可以看出，HikariCP 中不能存在配错参数名的情况
+      // 如果该参数setter方法不存在，则抛出异常，从这里可以看出，HikariCP 中不能存在配错参数名的情况
       if (writeMethod == null) {
          LOGGER.error("Property {} does not exist on target {}", propName, target.getClass());
          throw new RuntimeException(String.format("Property %s does not exist on target %s", propName, target.getClass()));
       }
-	  
+      
       // 接下来就是调用setter方法来配置具体参数了。
       try {
          Class<?> paramClass = writeMethod.getParameterTypes()[0];
@@ -913,7 +913,7 @@ borrow 和 requite 对于 `ConcurrentBag` 而言是只读的操作，addConnecti
                   return poolEntry.createProxyConnection(leakTask.schedule(poolEntry), now);
                }
             } while (timeout > 0L);
-			// 不涉及
+            // 不涉及
             metricsTracker.recordBorrowTimeoutStats(startTime);
          }
          catch (InterruptedException e) {
