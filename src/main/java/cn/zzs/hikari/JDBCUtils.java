@@ -16,7 +16,6 @@ import com.zaxxer.hikari.HikariDataSource;
 /**
  * 
  * <p>用于获取数据库连接对象的工具类。</p>
- * <p>这里使用DruidDataSource获取连接对象，获取到的连接对象可满足一般的数据库操作</p>
  * @author: zzs
  * @date: 2019年12月8日 上午10:13:16
  */
@@ -25,8 +24,6 @@ public class JDBCUtils {
     private static DataSource dataSource;
 
     private static ThreadLocal<Connection> tl = new ThreadLocal<>();
-
-    private static final Object obj = new Object();
 
     private static final Logger log = LoggerFactory.getLogger(JDBCUtils.class);
 
@@ -46,12 +43,8 @@ public class JDBCUtils {
         Connection connection = tl.get();
         // 判断为空的话，创建连接并绑定到当前线程
         if(connection == null) {
-            synchronized(obj) {
-                if((connection = tl.get()) == null) {
-                    connection = createConnection();
-                    tl.set(connection);
-                }
-            }
+            connection = createConnection();
+            tl.set(connection);
         }
         return connection;
     }
@@ -80,7 +73,6 @@ public class JDBCUtils {
                 log.error("关闭Statement对象异常", e);
             }
         }
-        // 注意：这里不关闭连接
         if(conn != null) {
             try {
                 conn.close();
@@ -88,6 +80,51 @@ public class JDBCUtils {
             } catch(SQLException e) {
                 log.error("关闭Connection对象异常", e);
             }
+        }
+    }
+
+    /**
+     * 
+     * <p>开启事务</p>
+     * @author: zzs
+     * @date: 2019年11月3日 上午11:03:24
+     * @return: void
+     * @throws SQLException 
+     */
+    public static void startTrasaction() throws SQLException {
+        getConnection().setAutoCommit(false);
+    }
+
+    /**
+     * 
+     * <p>提交事务</p>
+     * @author: zzs
+     * @date: 2019年11月3日 上午11:05:54
+     * @return: void
+     * @throws SQLException 
+     */
+    public static void commit() throws SQLException {
+        Connection connection = tl.get();
+        if(connection == null) {
+            throw new RuntimeException("未开启事务");
+        }
+        connection.commit();
+        connection.setAutoCommit(true);
+    }
+
+    /**
+     * 
+     * <p>回滚事务</p>
+     * @author: zzs
+     * @date: 2019年11月3日 上午11:08:12
+     * @return: void
+     * @throws SQLException 
+     */
+    public static void rollback() throws SQLException {
+        Connection connection = tl.get();
+        if(connection != null) {
+            connection.rollback();
+            connection.setAutoCommit(true);
         }
     }
 
@@ -109,9 +146,6 @@ public class JDBCUtils {
      * @throws SQLException 
      */
     private static Connection createConnection() throws SQLException {
-        if(dataSource == null) {
-            throw new RuntimeException("创建数据源失败");
-        }
         Connection conn = null;
         // 获得连接
         conn = dataSource.getConnection();
@@ -129,7 +163,7 @@ public class JDBCUtils {
             HikariConfig config = new HikariConfig("/hikari.properties");
             dataSource = new HikariDataSource(config);
         } catch(Exception e) {
-            log.error("创建数据源失败", e);
+            throw new RuntimeException("创建数据源失败", e);
         }
     }
 }
